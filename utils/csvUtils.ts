@@ -1,3 +1,7 @@
+
+import * as fs from 'fs';
+import * as path from 'path';
+
 export type CustomerSet = {
   'First Name': string;
   'Last Name': string;
@@ -6,9 +10,8 @@ export type CustomerSet = {
 };
 
 export function readCsvSets(filePath: string): CustomerSet[] {
-  const fs = require('fs');
   const data = fs.readFileSync(filePath, 'utf-8');
-  const lines = data.trim().split('\n');
+  const lines: string[] = data.trim().split('\n');
   const sets: CustomerSet[] = [];
   for (let i = 1; i < lines.length; i += 3) {
     const set: any = {};
@@ -20,4 +23,18 @@ export function readCsvSets(filePath: string): CustomerSet[] {
     sets.push(set as CustomerSet);
   }
   return sets;
+}
+
+export function getTestData(): { [key: string]: string }[] {
+  const filePath = path.resolve(__dirname, '../test-data/createAccount_TestData.csv');
+  const data = fs.readFileSync(filePath, 'utf-8');
+  const lines: string[] = data.trim().split('\n');
+  const headers: string[] = lines[0].split(',');
+  return lines.slice(1).map((line: string) => {
+    const values: string[] = line.split(',');
+    return headers.reduce((obj: { [key: string]: string }, key: string, idx: number) => {
+      obj[key] = values[idx];
+      return obj;
+    }, {} as { [key: string]: string });
+  });
 }
