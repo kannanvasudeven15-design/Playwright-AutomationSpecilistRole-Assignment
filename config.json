@@ -1,0 +1,12 @@
+{
+  "existingCustomer": {
+    "firstName": "Hermoine",
+    "lastName": "Granger",
+    "postCode": "E859AB"
+  },
+  "newCustomer": {
+    "firstName": "TestFirst",
+    "lastName": "TestLast",
+    "postCode": "99999"
+  }
+}
