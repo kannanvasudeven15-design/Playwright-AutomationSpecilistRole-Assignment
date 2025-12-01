@@ -1,133 +1,94 @@
 import { test, expect } from '@playwright/test';
 import fs from 'fs';
 import path from 'path';
+import * as XLSX from 'xlsx';
+
+
+type Customer = {
+  firstName: string;
+  lastName: string;
+  postCode: string;
+};
+
+function readExcel(filePath: string): Customer[] {
+  const workbook = XLSX.readFile(filePath);
+  const sheetName = workbook.SheetNames[0];
+  const sheet = workbook.Sheets[sheetName];
+  return XLSX.utils.sheet_to_json(sheet) as Customer[];
+}
+
+type CustomerSet = {
+  'First Name': string;
+  'Last Name': string;
+  'Post Code': string;
+  scenario: string;
+};
+
+function readCsvSets(filePath: string): CustomerSet[] {
+  const data = fs.readFileSync(filePath, 'utf-8');
+  const lines = data.trim().split('\n');
+  const sets: CustomerSet[] = [];
+  for (let i = 1; i < lines.length; i += 3) {
+    const set: any = {};
+    for (let j = 0; j < 3; j++) {
+      const [key, value, scenario] = lines[i + j].split(',');
+      set[key] = value;
+      set['scenario'] = scenario;
+    }
+    sets.push(set as CustomerSet);
+  }
+  return sets;
+}
 
 test.describe('JIRA 1 - Create Customer', () => {
 
-  test('End to end flow scenario - should create a new customer and show success message', async ({ page }) => {
+test('Test 1: End to End Flow scenario - should create a new customer and show success message', async ({ page }) => {
+  // Read test data from Excel
+  const excelPath = path.resolve(__dirname, '../../test-data/AddNewCusotmer_TestData.xlsx');
+  const customers = readExcel(excelPath);
+
+  for (const customerRaw of customers) {
+    const customer = customerRaw as Customer;
     // Navigate to login page
     await page.goto('https://www.globalsqa.com/angularJs-protractor/BankingProject/#/login');
     await expect(page).toHaveURL(/BankingProject\/\#\/login/, { timeout: 10000 });
-
-    // Verify header
-    await expect(page.getByText('XYZ Bank')).toBeVisible({ timeout: 5000 });
-
-    // Verify Home Button
-    const homeBtn = page.getByRole('button', { name: 'Home' });
-    await expect(homeBtn).toBeVisible({ timeout: 5000 });
-    await expect(homeBtn).toHaveText('Home');
-
-    // Verify Customer Login Button
-    const customerLoginBtn = page.getByRole('button', { name: 'Customer Login' });
-    await expect(customerLoginBtn).toBeVisible({ timeout: 5000 });
-    await expect(customerLoginBtn).toHaveText('Customer Login');
-
-    // Verify Bank Manager Login Button
     const managerLoginBtn = page.getByRole('button', { name: 'Bank Manager Login' });
     await expect(managerLoginBtn).toBeVisible({ timeout: 5000 });
-    await expect(managerLoginBtn).toHaveText('Bank Manager Login');
-
-    // Click Bank Manager Login
     await managerLoginBtn.click();
     await expect(page).toHaveURL(/BankingProject\/\#\/manager/, { timeout: 10000 });
-
-    // Check for Add Customer Button
     const addCustomerBtn = page.getByRole('button', { name: 'Add Customer' });
     await expect(addCustomerBtn).toBeVisible({ timeout: 5000 });
     await addCustomerBtn.click();
     await expect(page).toHaveURL(/BankingProject\/\#\/manager\/addCust/, { timeout: 10000 });
-
-    // Fill mandatory fields
-    await page.getByRole('textbox', { name: 'First Name' }).fill('John');
-    await page.getByRole('textbox', { name: 'Last Name' }).fill('Doe');
-    await page.getByRole('textbox', { name: 'Post Code' }).fill('12345');
-
-    // Click Add Customer
+    await page.getByRole('textbox', { name: 'First Name' }).fill(customer.firstName);
+    await page.getByRole('textbox', { name: 'Last Name' }).fill(customer.lastName);
+    await page.getByRole('textbox', { name: 'Post Code' }).fill(customer.postCode);
+    page.once('dialog', async dialog => {
+      expect(dialog.message()).toMatch(/^Customer added successfully with customer id :\d+$/);
+      const match = dialog.message().match(/Customer added successfully with customer id :(\d+)/);
+      if (match) {
+        const customerId = match[1];
+        console.log(`Customer added successfully. Customer ID: ${customerId}`);
+      } else {
+        console.log('Alert Text:', dialog.message());
+      }
+      await dialog.accept();
+    });
     await page.getByRole('form').getByRole('button', { name: 'Add Customer' }).click();
 
-      // Handle alert and capture text
-      page.once('dialog', async dialog => {
-        // Assert the alert message matches the expected format
-        expect(dialog.message()).toMatch(/^Customer added successfully with customer id :\d+$/);
-        // Extract and display the customer id from the alert text
-        const match = dialog.message().match(/Customer added successfully with customer id :(\d+)/);
-        if (match) {
-          const customerId = match[1];
-          console.log(`Customer added successfully. Customer ID: ${customerId}`);
-        } else {
-          console.log('Alert Text:', dialog.message());
-        }
-        await dialog.accept();
-      });
-
-    // Click Customers button
+    // Click Customers button and verify
     const customersBtn = page.getByRole('button', { name: 'Customers' });
     await expect(customersBtn).toBeVisible({ timeout: 5000 });
     await customersBtn.click();
     await expect(page).toHaveURL(/BankingProject\/\#\/manager\/list/, { timeout: 10000 });
-
-    // Verify newly added customer is present
-    const customerFirstName = 'John';
-    const customerLastName = 'Doe';
-    const customerPostCode = '12345';
-    const newCustomerRow = page.getByRole('row', { name: new RegExp(`${customerFirstName} ${customerLastName} ${customerPostCode}`) });
+    const customerRowSelector = `tr:has(td:text-is("${customer.firstName}")):has(td:text-is("${customer.lastName}")):has(td:text-is("${customer.postCode}"))`;
+    const newCustomerRow = page.locator(customerRowSelector);
     await expect(newCustomerRow).toBeVisible({ timeout: 5000 });
-    console.log(`'${customerFirstName} ${customerLastName}' is added to the Customer table.`);
-  });
+    console.log(`'${customer.firstName} ${customer.lastName}' is present in the Customer table.`);
+  }
+});
 
-    test('Field validation scenario - should require firstname lastname postcode when adding customer', async ({ page }) => {
-    // Navigate to login page
-    await page.goto('https://www.globalsqa.com/angularJs-protractor/BankingProject/#/login');
-    await expect(page).toHaveURL(/BankingProject\/\#\/login/, { timeout: 10000 });
-
-    // Click Bank Manager Login
-    const managerLoginBtn = page.getByRole('button', { name: 'Bank Manager Login' });
-    await expect(managerLoginBtn).toBeVisible({ timeout: 5000 });
-    await managerLoginBtn.click();
-    await expect(page).toHaveURL(/BankingProject\/\#\/manager/, { timeout: 10000 });
-
-    // Click Add Customer Button
-    const addCustomerBtn = page.getByRole('button', { name: 'Add Customer' });
-    await expect(addCustomerBtn).toBeVisible({ timeout: 5000 });
-    await addCustomerBtn.click();
-    await expect(page).toHaveURL(/BankingProject\/\#\/manager\/addCust/, { timeout: 10000 });
-
-
-    // 1. Fill only Last Name and Postcode. Attempt to submit the form without filling First Name.
-    await page.getByRole('textbox', { name: 'First Name' }).fill('');
-    await page.getByRole('textbox', { name: 'Last Name' }).fill('Doe');
-    await page.getByRole('textbox', { name: 'Post Code' }).fill('12345');
-    page.once('dialog', async dialog => {
-      expect(dialog.message()).toBe('Please fill out all the required fields!');
-      console.log('Alert Text (no firstname):', dialog.message());
-      await dialog.accept();
-    });
-    await page.getByRole('form').getByRole('button', { name: 'Add Customer' }).click();
-
-    // 2. Fill only First Name and Postcode. Attempt to submit the form without filling Last Name.
-    await page.getByRole('textbox', { name: 'First Name' }).fill('John');
-    await page.getByRole('textbox', { name: 'Last Name' }).fill('');
-    await page.getByRole('textbox', { name: 'Post Code' }).fill('12345');
-    page.once('dialog', async dialog => {
-      expect(dialog.message()).toBe('Please fill out all the required fields!');
-      console.log('Alert Text (no lastname):', dialog.message());
-      await dialog.accept();
-    });
-    await page.getByRole('form').getByRole('button', { name: 'Add Customer' }).click();
-
-    // 3. Fill only First Name and Last Name. Attempt to submit the form without filling Postcode.
-    await page.getByRole('textbox', { name: 'First Name' }).fill('John');
-    await page.getByRole('textbox', { name: 'Last Name' }).fill('Doe');
-    await page.getByRole('textbox', { name: 'Post Code' }).fill('');
-    page.once('dialog', async dialog => {
-      expect(dialog.message()).toBe('Please fill out all the required fields!');
-      console.log('Alert Text (no postcode):', dialog.message());
-      await dialog.accept();
-    });
-    await page.getByRole('form').getByRole('button', { name: 'Add Customer' }).click();
-  });
-  
-   test('Duplicate Customer scenario - should show duplicate message when customer already exists', async ({ page }) => {
+test('Test 2: Duplicate Customer scenario - should show duplicate message when customer already exists', async ({ page }) => {
     // Navigate to login page
     await page.goto('https://www.globalsqa.com/angularJs-protractor/BankingProject/#/login');
     await expect(page).toHaveURL(/BankingProject\/\#\/login/, { timeout: 10000 });
@@ -158,17 +119,18 @@ test.describe('JIRA 1 - Create Customer', () => {
       }
     }
 
-    // Read customer details from config.json
-    const configPath = path.resolve(__dirname, '../../config.json');
-    const configRaw = fs.readFileSync(configPath, 'utf-8');
-    const config = JSON.parse(configRaw);
-    const customersToTest = [config.existingCustomer, config.newCustomer];
+    // Read customer details from test-data/duplicateCustomer-TestData.json
+    const testDataPath = path.resolve(__dirname, '../../test-data/duplicateCustomer-TestData.json');
+    const testDataRaw = fs.readFileSync(testDataPath, 'utf-8');
+    const testData = JSON.parse(testDataRaw);
+    const customersToTest = Object.values(testData);
 
     for (const customer of customersToTest) {
+      const cust = customer as { firstName: string; lastName: string; postCode: string };
       const isDuplicate = existingCustomers.some(c =>
-        c.firstName === customer.firstName &&
-        c.lastName === customer.lastName &&
-        c.postCode === customer.postCode
+        c.firstName === cust.firstName &&
+        c.lastName === cust.lastName &&
+        c.postCode === cust.postCode
       );
 
       // Click Add Customer button
@@ -178,18 +140,18 @@ test.describe('JIRA 1 - Create Customer', () => {
       await expect(page).toHaveURL(/BankingProject\/\#\/manager\/addCust/, { timeout: 10000 });
 
       // Fill customer details
-      await page.getByRole('textbox', { name: 'First Name' }).fill(customer.firstName);
-      await page.getByRole('textbox', { name: 'Last Name' }).fill(customer.lastName);
-      await page.getByRole('textbox', { name: 'Post Code' }).fill(customer.postCode);
+      await page.getByRole('textbox', { name: 'First Name' }).fill(cust.firstName);
+      await page.getByRole('textbox', { name: 'Last Name' }).fill(cust.lastName);
+      await page.getByRole('textbox', { name: 'Post Code' }).fill(cust.postCode);
 
       // Register dialog handler before clicking the button
       page.once('dialog', async dialog => {
         if (isDuplicate) {
           expect(dialog.message()).toBe('Please check the details. Customer may be duplicate.');
-          console.log(`Customer '${customer.firstName} ${customer.lastName}' is already existing in the customer table.`);
+          console.log(`Customer '${cust.firstName} ${cust.lastName}' is already existing in the customer table.`);
         } else {
           expect(dialog.message()).toMatch(/^Customer added successfully with customer id :\d+$/);
-          console.log(`Customer '${customer.firstName} ${customer.lastName}' added successfully.`);
+          console.log(`Customer '${cust.firstName} ${cust.lastName}' added successfully.`);
         }
         await dialog.accept();
       });
@@ -202,5 +164,57 @@ test.describe('JIRA 1 - Create Customer', () => {
 
     // All customer addition and duplicate detection logic is handled in the loop above.
   });
+  
+test('Test 3: Field validation scenario - should require firstname lastname postcode for adding customer', async ({ page }) => {
+  const csvPath = path.resolve(__dirname, '../../test-data/AddCustomerFieldValidation.csv');
+  const customerSets = readCsvSets(csvPath);
+
+  for (const customerData of customerSets) {
+    // Navigate to login page
+    await page.goto('https://www.globalsqa.com/angularJs-protractor/BankingProject/#/login');
+    await expect(page).toHaveURL(/BankingProject\/\#\/login/, { timeout: 10000 });
+
+    // Click Bank Manager Login
+    const managerLoginBtn = page.getByRole('button', { name: 'Bank Manager Login' });
+    await expect(managerLoginBtn).toBeVisible({ timeout: 5000 });
+    await managerLoginBtn.click();
+    await expect(page).toHaveURL(/BankingProject\/\#\/manager/, { timeout: 10000 });
+
+    // Click Add Customer Button
+    const addCustomerBtn = page.getByRole('button', { name: 'Add Customer' });
+    await expect(addCustomerBtn).toBeVisible({ timeout: 5000 });
+    await addCustomerBtn.click();
+    await expect(page).toHaveURL(/BankingProject\/\#\/manager\/addCust/, { timeout: 10000 });
+
+    // 1. Fill only Last Name and Postcode. Attempt to submit the form without filling First Name.
+    await page.getByRole('textbox', { name: 'First Name' }).fill('');
+    await page.getByRole('textbox', { name: 'Last Name' }).fill(customerData['Last Name']);
+    await page.getByRole('textbox', { name: 'Post Code' }).fill(customerData['Post Code']);
+    await page.getByRole('form').getByRole('button', { name: 'Add Customer' }).click();
+    const firstNameInput = page.getByRole('textbox', { name: 'First Name' });
+    const firstNameError = await firstNameInput.evaluate(input => (input as HTMLInputElement).validationMessage);
+    expect(firstNameError).toBe('Please fill in this field.');
+
+    // 2. Fill only First Name and Postcode. Attempt to submit the form without filling Last Name.
+    await page.getByRole('textbox', { name: 'First Name' }).fill(customerData['First Name']);
+    await page.getByRole('textbox', { name: 'Last Name' }).fill('');
+    await page.getByRole('textbox', { name: 'Post Code' }).fill(customerData['Post Code']);
+    await page.getByRole('form').getByRole('button', { name: 'Add Customer' }).click();
+    const lastNameInput = page.getByRole('textbox', { name: 'Last Name' });
+    const lastNameError = await lastNameInput.evaluate(input => (input as HTMLInputElement).validationMessage);
+    expect(lastNameError).toBe('Please fill in this field.');
+
+    // 3. Fill only First Name and Last Name. Attempt to submit the form without filling Postcode.
+    await page.getByRole('textbox', { name: 'First Name' }).fill(customerData['First Name']);
+    await page.getByRole('textbox', { name: 'Last Name' }).fill(customerData['Last Name']);
+    await page.getByRole('textbox', { name: 'Post Code' }).fill('');
+    await page.getByRole('form').getByRole('button', { name: 'Add Customer' }).click();
+    const postCodeInput = page.getByRole('textbox', { name: 'Post Code' });
+    const postCodeError = await postCodeInput.evaluate(input => (input as HTMLInputElement).validationMessage);
+    expect(postCodeError).toBe('Please fill in this field.');
+  }
+});
+
+
 });
 

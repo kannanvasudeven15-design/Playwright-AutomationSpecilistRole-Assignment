@@ -1,0 +1,1 @@
+'John Doe' is added to the Customer table.

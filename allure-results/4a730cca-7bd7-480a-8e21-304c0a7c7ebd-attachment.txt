@@ -1,0 +1,5 @@
+Customer 'Hermoine Granger' is already existing in the customer table.
+Customer 'Tom Cruise' added successfully.
+Customer 'Albert Thomas' added successfully.
+Customer 'Albus Dumbledore' is already existing in the customer table.
+Customer 'Ron Weasly' is already existing in the customer table.

@@ -1,0 +1,12 @@
+Customer added successfully. Customer ID: 6
+Duplicate detected (second add): John  Doe
+'John  Doe' is present in the Customer table.
+Customer added successfully. Customer ID: 7
+Duplicate detected (second add): Jane  Smith
+'Jane  Smith' is present in the Customer table.
+Customer added successfully. Customer ID: 8
+Duplicate detected (second add): Tom  Carr
+'Tom  Carr' is present in the Customer table.
+Duplicate (first add): Tom  Carr
+Duplicate detected (second add): Tom  Carr
+'Tom  Carr' is present in the Customer table.

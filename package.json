@@ -11,6 +11,10 @@
   "devDependencies": {
     "@playwright/test": "^1.57.0",
     "@types/node": "^24.10.1",
+    "@types/xlsx": "^0.0.35",
     "allure-playwright": "^3.4.2"
+  },
+  "dependencies": {
+    "xlsx": "^0.18.5"
   }
 }

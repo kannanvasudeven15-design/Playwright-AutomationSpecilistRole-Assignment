@@ -1,0 +1,27 @@
+{
+  "existingCustomer1": {
+    "firstName": "Hermoine",
+    "lastName": "Granger",
+    "postCode": "E859AB"
+  },
+  "newCustomer1": {
+    "firstName": "Tom",
+    "lastName": "Cruise",
+    "postCode": "M154HU"
+  },
+   "newCustomer2": {
+    "firstName": "Albert",
+    "lastName": "Thomas",
+    "postCode": "M164HY"
+  },
+  "existingCustomer2": {
+    "firstName": "Albus",
+    "lastName": "Dumbledore",
+    "postCode": "E55656"
+  },
+  "existingCustomer3": {
+    "firstName": "Ron",
+    "lastName": "Weasly",
+    "postCode": "E55555"
+  }
+}
