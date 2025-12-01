@@ -1,5 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { getTestData } from '../../utils/csvUtils';
+import { ManagerPage } from '../../pages/managerPage';
+import { urls } from '../../utils/config';
 
 
 test.describe('JIRA 2 - Open Customer Account', () => {
@@ -9,22 +11,18 @@ test.describe('JIRA 2 - Open Customer Account', () => {
     const Currency = data['Currency'];
     test(`Test 1: Open Customer Account - should create account for ${Name} with ${Currency} currency and update Customer Record`, async ({ page }) => {
      
-      // Navigate to login page
-      await page.goto('https://www.globalsqa.com/angularJs-protractor/BankingProject/#/login');
-     
-      // Click Bank Manager Login
-      await page.getByRole('button', { name: 'Bank Manager Login' }).click();
-      await expect(page).toHaveURL(/.*manager/, { timeout: 5000 });
-      
-      // Click Open Account
-      await page.getByRole('button', { name: 'Open Account' }).click();
-      await expect(page).toHaveURL(/.*openAccount/, { timeout: 5000 });
-      
-      // Select customer and currency from test data
+      const managerPage = new ManagerPage(page);
+      console.log('Test Data:', { Name, Currency });
+      if (!Currency) {
+        throw new Error(`Currency is undefined for customer: ${Name}`);
+      }
+      await managerPage.goto(urls.login);
+      await managerPage.loginAsManager();
+      await managerPage.clickOpenAccount();
+      await expect(page.locator('select').first()).toBeVisible({ timeout: 10000 });
+      await expect(page.locator('select').nth(1)).toBeVisible({ timeout: 10000 });
       await page.locator('select').first().selectOption({ label: Name });
       await page.locator('select').nth(1).selectOption({ label: Currency });
-     
-      // Click Process and handle alert
       page.once('dialog', async dialog => {
         const message = dialog.message();
         expect(message).toMatch(/Account created successfully with account Number :\d+/);
@@ -35,13 +33,8 @@ test.describe('JIRA 2 - Open Customer Account', () => {
         }
         await dialog.accept();
       });
-      await page.getByRole('button', { name: 'Process' }).click();
-      
-      // Click Customers button
-      await page.getByRole('button', { name: 'Customers' }).click();
-      await expect(page).toHaveURL(/.*list/, { timeout: 5000 });
-      
-      // Find customer row and verify account number
+      await managerPage.clickProcess();
+      await managerPage.clickCustomers();
       const row = await page.locator('table').locator('tbody tr').filter({ hasText: Name }).first();
       const accountCell = await row.locator('td').nth(3).textContent();
       expect(accountCell).toMatch(/\d+/);
@@ -51,28 +44,14 @@ test.describe('JIRA 2 - Open Customer Account', () => {
 
   test('Test 2: Verify available currencies - should list all available currencies', async ({ page }) => {
   
-    // Navigate to login page
-    await page.goto('https://www.globalsqa.com/angularJs-protractor/BankingProject/#/login');
-   
-    // Click Bank Manager Login
-    await page.getByRole('button', { name: 'Bank Manager Login' }).click();
-    await expect(page).toHaveURL(/.*manager/, { timeout: 5000 });
-
-    // Click Open Account
-    await page.getByRole('button', { name: 'Open Account' }).click();
-    await expect(page).toHaveURL(/.*openAccount/, { timeout: 5000 });
-
-    // Get all currency values using live selector
+    const managerPage = new ManagerPage(page);
+    await managerPage.goto(urls.login);
+    await managerPage.loginAsManager();
+    await managerPage.clickOpenAccount();
     const currencyOptions = await page.locator('select').nth(1).locator('option').allTextContents();
-
-    // Filter out placeholder
     const currencies = currencyOptions.filter(c => c !== '---Currency---');
-
-    // Assert expected currencies with timeout
     expect(currencies.length).toBeGreaterThan(0);
     expect(currencies).toEqual(expect.arrayContaining(['Dollar', 'Pound', 'Rupee']));
-
-    // Display currencies in console
     console.log('Available currencies under Currency field:');
     currencies.forEach(c => console.log(c));
 
