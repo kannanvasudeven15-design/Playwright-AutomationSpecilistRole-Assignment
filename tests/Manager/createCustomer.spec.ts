@@ -1,44 +1,8 @@
 import { test, expect } from '@playwright/test';
-import fs from 'fs';
 import path from 'path';
-import * as XLSX from 'xlsx';
-
-
-type Customer = {
-  firstName: string;
-  lastName: string;
-  postCode: string;
-};
-
-function readExcel(filePath: string): Customer[] {
-  const workbook = XLSX.readFile(filePath);
-  const sheetName = workbook.SheetNames[0];
-  const sheet = workbook.Sheets[sheetName];
-  return XLSX.utils.sheet_to_json(sheet) as Customer[];
-}
-
-type CustomerSet = {
-  'First Name': string;
-  'Last Name': string;
-  'Post Code': string;
-  scenario: string;
-};
-
-function readCsvSets(filePath: string): CustomerSet[] {
-  const data = fs.readFileSync(filePath, 'utf-8');
-  const lines = data.trim().split('\n');
-  const sets: CustomerSet[] = [];
-  for (let i = 1; i < lines.length; i += 3) {
-    const set: any = {};
-    for (let j = 0; j < 3; j++) {
-      const [key, value, scenario] = lines[i + j].split(',');
-      set[key] = value;
-      set['scenario'] = scenario;
-    }
-    sets.push(set as CustomerSet);
-  }
-  return sets;
-}
+import fs from 'fs';
+import { readExcel, Customer } from '../../utils/excelUtils';
+import { readCsvSets, CustomerSet } from '../../utils/csvUtils';
 
 test.describe('JIRA 1 - Create Customer', () => {
 
