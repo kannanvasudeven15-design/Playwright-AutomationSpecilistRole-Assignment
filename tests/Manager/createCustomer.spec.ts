@@ -3,59 +3,8 @@ import fs from 'fs';
 import path from 'path';
 
 test.describe('JIRA 1 - Create Customer', () => {
-  test('Field validation scenario - should create a new customer and show success message', async ({ page }) => {
-    // Navigate to login page
-    await page.goto('https://www.globalsqa.com/angularJs-protractor/BankingProject/#/login');
-    await expect(page).toHaveURL(/BankingProject\/\#\/login/, { timeout: 10000 });
 
-    // Click Bank Manager Login
-    const managerLoginBtn = page.getByRole('button', { name: 'Bank Manager Login' });
-    await expect(managerLoginBtn).toBeVisible({ timeout: 5000 });
-    await managerLoginBtn.click();
-    await expect(page).toHaveURL(/BankingProject\/\#\/manager/, { timeout: 10000 });
-
-    // Click Add Customer Button
-    const addCustomerBtn = page.getByRole('button', { name: 'Add Customer' });
-    await expect(addCustomerBtn).toBeVisible({ timeout: 5000 });
-    await addCustomerBtn.click();
-    await expect(page).toHaveURL(/BankingProject\/\#\/manager\/addCust/, { timeout: 10000 });
-
-
-    // 1. Fill only Last Name and Postcode. Attempt to submit the form without filling First Name.
-    await page.getByRole('textbox', { name: 'First Name' }).fill('');
-    await page.getByRole('textbox', { name: 'Last Name' }).fill('Doe');
-    await page.getByRole('textbox', { name: 'Post Code' }).fill('12345');
-    page.once('dialog', async dialog => {
-      expect(dialog.message()).toBe('Please fill out all the required fields!');
-      console.log('Alert Text (no firstname):', dialog.message());
-      await dialog.accept();
-    });
-    await page.getByRole('form').getByRole('button', { name: 'Add Customer' }).click();
-
-    // 2. Fill only First Name and Postcode. Attempt to submit the form without filling Last Name.
-    await page.getByRole('textbox', { name: 'First Name' }).fill('John');
-    await page.getByRole('textbox', { name: 'Last Name' }).fill('');
-    await page.getByRole('textbox', { name: 'Post Code' }).fill('12345');
-    page.once('dialog', async dialog => {
-      expect(dialog.message()).toBe('Please fill out all the required fields!');
-      console.log('Alert Text (no lastname):', dialog.message());
-      await dialog.accept();
-    });
-    await page.getByRole('form').getByRole('button', { name: 'Add Customer' }).click();
-
-    // 3. Fill only First Name and Last Name. Attempt to submit the form without filling Postcode.
-    await page.getByRole('textbox', { name: 'First Name' }).fill('John');
-    await page.getByRole('textbox', { name: 'Last Name' }).fill('Doe');
-    await page.getByRole('textbox', { name: 'Post Code' }).fill('');
-    page.once('dialog', async dialog => {
-      expect(dialog.message()).toBe('Please fill out all the required fields!');
-      console.log('Alert Text (no postcode):', dialog.message());
-      await dialog.accept();
-    });
-    await page.getByRole('form').getByRole('button', { name: 'Add Customer' }).click();
-  });
-
-  test('End to end flow scenario - should require firstname lastname postcode when adding customer', async ({ page }) => {
+  test('End to end flow scenario - should create a new customer and show success message', async ({ page }) => {
     // Navigate to login page
     await page.goto('https://www.globalsqa.com/angularJs-protractor/BankingProject/#/login');
     await expect(page).toHaveURL(/BankingProject\/\#\/login/, { timeout: 10000 });
@@ -126,6 +75,58 @@ test.describe('JIRA 1 - Create Customer', () => {
     console.log(`'${customerFirstName} ${customerLastName}' is added to the Customer table.`);
   });
 
+    test('Field validation scenario - should require firstname lastname postcode when adding customer', async ({ page }) => {
+    // Navigate to login page
+    await page.goto('https://www.globalsqa.com/angularJs-protractor/BankingProject/#/login');
+    await expect(page).toHaveURL(/BankingProject\/\#\/login/, { timeout: 10000 });
+
+    // Click Bank Manager Login
+    const managerLoginBtn = page.getByRole('button', { name: 'Bank Manager Login' });
+    await expect(managerLoginBtn).toBeVisible({ timeout: 5000 });
+    await managerLoginBtn.click();
+    await expect(page).toHaveURL(/BankingProject\/\#\/manager/, { timeout: 10000 });
+
+    // Click Add Customer Button
+    const addCustomerBtn = page.getByRole('button', { name: 'Add Customer' });
+    await expect(addCustomerBtn).toBeVisible({ timeout: 5000 });
+    await addCustomerBtn.click();
+    await expect(page).toHaveURL(/BankingProject\/\#\/manager\/addCust/, { timeout: 10000 });
+
+
+    // 1. Fill only Last Name and Postcode. Attempt to submit the form without filling First Name.
+    await page.getByRole('textbox', { name: 'First Name' }).fill('');
+    await page.getByRole('textbox', { name: 'Last Name' }).fill('Doe');
+    await page.getByRole('textbox', { name: 'Post Code' }).fill('12345');
+    page.once('dialog', async dialog => {
+      expect(dialog.message()).toBe('Please fill out all the required fields!');
+      console.log('Alert Text (no firstname):', dialog.message());
+      await dialog.accept();
+    });
+    await page.getByRole('form').getByRole('button', { name: 'Add Customer' }).click();
+
+    // 2. Fill only First Name and Postcode. Attempt to submit the form without filling Last Name.
+    await page.getByRole('textbox', { name: 'First Name' }).fill('John');
+    await page.getByRole('textbox', { name: 'Last Name' }).fill('');
+    await page.getByRole('textbox', { name: 'Post Code' }).fill('12345');
+    page.once('dialog', async dialog => {
+      expect(dialog.message()).toBe('Please fill out all the required fields!');
+      console.log('Alert Text (no lastname):', dialog.message());
+      await dialog.accept();
+    });
+    await page.getByRole('form').getByRole('button', { name: 'Add Customer' }).click();
+
+    // 3. Fill only First Name and Last Name. Attempt to submit the form without filling Postcode.
+    await page.getByRole('textbox', { name: 'First Name' }).fill('John');
+    await page.getByRole('textbox', { name: 'Last Name' }).fill('Doe');
+    await page.getByRole('textbox', { name: 'Post Code' }).fill('');
+    page.once('dialog', async dialog => {
+      expect(dialog.message()).toBe('Please fill out all the required fields!');
+      console.log('Alert Text (no postcode):', dialog.message());
+      await dialog.accept();
+    });
+    await page.getByRole('form').getByRole('button', { name: 'Add Customer' }).click();
+  });
+  
    test('Duplicate Customer scenario - should show duplicate message when customer already exists', async ({ page }) => {
     // Navigate to login page
     await page.goto('https://www.globalsqa.com/angularJs-protractor/BankingProject/#/login');
