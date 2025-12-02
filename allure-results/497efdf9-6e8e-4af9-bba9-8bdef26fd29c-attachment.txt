@@ -1,3 +1,0 @@
-Test Data: { Name: 'Albus Dumbledore', Currency: 'Dollar' }
-Alert message: Account created successfully with account Number :1016
-Account number(s) for Albus Dumbledore: 1010 1011 1012 1016 

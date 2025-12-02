@@ -1,3 +1,0 @@
-Test Data: { Name: 'Harry Potter', Currency: 'Pound' }
-Alert message: Account created successfully with account Number :1016
-Account number(s) for Harry Potter: 1004 1005 1006 1016 

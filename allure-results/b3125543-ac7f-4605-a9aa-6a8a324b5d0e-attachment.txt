@@ -1,1 +1,0 @@
-Test Data: { Name: 'Hermoine Granger', Currency: 'Rupee' }

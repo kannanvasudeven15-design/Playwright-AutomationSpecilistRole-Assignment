@@ -1,3 +1,0 @@
-Test Data: { Name: 'Hermoine Granger', Currency: 'Rupee' }
-Alert message: Account created successfully with account Number :1016
-Account number(s) for Hermoine Granger: 1001 1002 1003 1016 

@@ -1,3 +1,0 @@
-Customer 'Hermoine Granger' is already existing in the customer table.
-Customer 'TestFirst TestLast' added successfully.
-Customer 'Albus Dumbledore' is already existing in the customer table.

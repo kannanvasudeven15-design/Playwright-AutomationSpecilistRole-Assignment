@@ -1,6 +1,0 @@
-Customer added successfully. Customer ID: 6
-'John  Doe' is added to the Customer table.
-Customer added successfully. Customer ID: 7
-'Jane  Smith' is added to the Customer table.
-Customer added successfully. Customer ID: 8
-'Tom  Carr' is added to the Customer table.

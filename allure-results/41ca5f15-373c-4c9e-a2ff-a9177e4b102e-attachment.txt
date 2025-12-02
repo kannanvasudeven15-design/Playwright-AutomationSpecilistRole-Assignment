@@ -1,4 +1,0 @@
-Available currencies under Currency field:
-Dollar
-Pound
-Rupee
