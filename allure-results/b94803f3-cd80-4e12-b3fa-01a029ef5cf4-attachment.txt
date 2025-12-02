@@ -1,0 +1,11 @@
+Transaction Table Rows: [
+  '\n' +
+    '        \n' +
+    '          \n' +
+    '            Date-Time\n' +
+    '          \n' +
+    '        \n' +
+    '        Amount\n' +
+    '        Transaction Type\n' +
+    '      '
+]

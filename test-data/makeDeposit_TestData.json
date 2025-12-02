@@ -1,0 +1,8 @@
+[
+  {
+    "customerName": "Harry Potter",
+    "depositAmount": 100,
+    "expectedWelcomeMessage": "Welcome Harry Potter !!",
+    "expectedTransactionType": "Credit"
+  }
+]

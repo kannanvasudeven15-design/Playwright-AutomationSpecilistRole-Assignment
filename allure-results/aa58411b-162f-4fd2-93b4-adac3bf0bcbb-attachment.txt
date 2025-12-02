@@ -1,0 +1,12 @@
+Transaction Table Rows: [
+  '\n' +
+    '        \n' +
+    '          \n' +
+    '            Date-Time\n' +
+    '          \n' +
+    '        \n' +
+    '        Amount\n' +
+    '        Transaction Type\n' +
+    '      ',
+  '\n        Dec 2, 2025 9:47:58 AM\n        100\n        Credit\n      '
+]

@@ -1,6 +1,9 @@
 import { Page, expect } from '@playwright/test';
 
 export class BasePage {
+    async expectTextVisible(text: string, timeout = 5000) {
+      await expect(this.page.getByText(text)).toBeVisible({ timeout });
+    }
   protected page: Page;
 
   constructor(page: Page) {

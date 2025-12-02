@@ -1,0 +1,6 @@
+Row 0: [
+  '\n          \n            Date-Time\n          \n        ',
+  'Amount',
+  'Transaction Type'
+]
+Row 1: [ 'Dec 2, 2025 10:13:31 AM', '100', 'Credit' ]
