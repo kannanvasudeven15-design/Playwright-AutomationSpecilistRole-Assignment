@@ -1,10 +1,11 @@
 import { test, expect } from '@playwright/test';
 import path from 'path';
 import fs from 'fs';
-import { readExcel, Customer } from '../../utils/excelUtils';
+import { readExcel } from '../../utils/excelUtils';
 import { readCsvSets, CustomerSet } from '../../utils/csvUtils';
 import { ManagerPage } from '../../pages/managerPage';
 import { urls } from '../../utils/config';
+import type { Customer } from '../../utils/excelUtils';
 
 test.describe('JIRA 1 - Create Customer', () => {
 

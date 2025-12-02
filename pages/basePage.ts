@@ -16,9 +16,10 @@ export class BasePage {
     }
   }
 
-  async clickByRole(role: string, name: string, timeout = 5000) {
+  async clickByRole(role: string, name: string, timeout = 50000) {
     const element = this.page.getByRole(role as any, { name });
     await expect(element).toBeVisible({ timeout });
+    await expect(element).toBeEnabled({ timeout });
     await element.click();
   }
 

@@ -1,0 +1,24 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - button "Home" [ref=e5] [cursor=pointer]
+    - strong [ref=e6]: XYZ Bank
+  - generic [ref=e8]:
+    - generic [ref=e9]:
+      - button "Add Customer" [ref=e10] [cursor=pointer]: Add Customer
+      - button "Open Account" [ref=e12] [cursor=pointer]
+      - button "Customers" [ref=e13] [cursor=pointer]
+    - form [ref=e17]:
+      - generic [ref=e18]:
+        - generic [ref=e19]: "First Name :"
+        - textbox "First Name" [ref=e20]: Tom
+      - generic [ref=e21]:
+        - generic [ref=e22]: "Last Name :"
+        - textbox "Last Name" [ref=e23]: Geth
+      - generic [ref=e24]:
+        - generic [ref=e25]: "Post Code :"
+        - textbox "Post Code" [active] [ref=e26]
+      - button "Add Customer" [ref=e27] [cursor=pointer]
+```
