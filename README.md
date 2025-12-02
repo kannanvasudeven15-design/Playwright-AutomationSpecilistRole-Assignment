@@ -1,10 +1,10 @@
-1. Approach
+**1. Approach**
 
 I implemented the solution using Playwright with TypeScript, following the Page Object Model (POM) design pattern for maintainability and scalability. The tests are organized into suites aligned with the provided user stories, and I adhered to clean code practices such as meaningful naming, modular design, reusable components, parameterization for dynamic test data and utility-driven architecture.
 
  
 
-2. Key Features
+**2. Key Features**
 
 Automated Tests for User Stories:
 JIRA-1: tests/Manager/createCustomer.spec.ts
@@ -32,7 +32,7 @@ Test 3: APIRequest Mock duplicate customer response -  create customer shows dup
 Cross-Browser Support: Configured for Chromium, Firefox, and WebKit.
  
 
-3. Page Object Model (POM) Design
+**3. Page Object Model (POM) Design**
 
 To ensure scalability and maintainability, I created the following POM classes:
 basePage: contains common reusable methods for navigation, role-based interactions, text visibility checks, and URL validation
@@ -44,7 +44,7 @@ This structure promotes reusability and clean separation of concerns across diff
 
  
 
-4. Utilities
+**4. Utilities**
 
 To support modularity and dynamic data handling, I implemented:
 config.ts: Stores environment-specific constants and URLs.
