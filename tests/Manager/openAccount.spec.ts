@@ -47,7 +47,7 @@ test.describe('JIRA 2 - Open Customer Account', () => {
   test('Test 2: Verify available currencies - should list all available currencies',{ tag: ['@PlaywrightWithGitHubActions'] }, async ({ page }) => {
   
     const managerPage = new ManagerPage(page);
-    console.log('test execution started for Verify Available Currencies');
+    console.log('test execution started for Verify Available Currencies in Open Account');
     await managerPage.goto(urls.login);
     await managerPage.loginAsManager();
     await managerPage.clickOpenAccount();
