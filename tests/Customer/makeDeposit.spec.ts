@@ -60,6 +60,7 @@ test.describe('JIRA 3: Customer Deposit Flow', () => {
   }
 
    test('Test 2: Amount field validation - should show required field tooltip when deposit amount is empty', async ({ page }) => {
+    console.log('Verify tooltip for empty deposit amount');
     const customerPage = new CustomerPage(page);
     const customerName = testData[0].customerName;
     await customerPage.navigateToCustomerLogin();
