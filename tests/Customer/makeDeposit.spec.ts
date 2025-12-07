@@ -5,7 +5,7 @@ import { CustomerPage } from '../../pages/customerPage';
 
 test.describe('JIRA 3: Customer Deposit Flow', () => {
   for (const data of testData) {
-    test(`Test 1: End to end flow - Deposit for ${data.customerName} - amount ${data.depositAmount}`,{ tag: ['@PlaywrightWithGitHubActions'] }, async ({ page }) => {
+    test(`Test 1: End to end flow - Deposit for ${data.customerName} - amount ${data.depositAmount}`, async ({ page }) => {
       const customerPage = new CustomerPage(page);
       await customerPage.navigateToCustomerLogin();
       await page.getByRole('combobox').selectOption({ label: data.customerName });
@@ -59,7 +59,7 @@ test.describe('JIRA 3: Customer Deposit Flow', () => {
     });
   }
 
-   test('Test 2: Amount field validation - should show required field tooltip when deposit amount is empty',{ tag: ['@PlaywrightWithGitHubActions'] }, async ({ page }) => {
+   test('Test 2: Amount field validation - should show required field tooltip when deposit amount is empty', async ({ page }) => {
     const customerPage = new CustomerPage(page);
     const customerName = testData[0].customerName;
     await customerPage.navigateToCustomerLogin();

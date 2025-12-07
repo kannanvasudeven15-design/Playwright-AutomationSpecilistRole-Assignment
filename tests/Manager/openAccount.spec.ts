@@ -39,6 +39,7 @@ test.describe('JIRA 2 - Open Customer Account', () => {
       const accountCell = await row.locator('td').nth(3).textContent();
       expect(accountCell).toMatch(/\d+/);
       console.log(`Account number(s) for ${Name}: ${accountCell}`);
+      console.log("Success")
     });
   });
 

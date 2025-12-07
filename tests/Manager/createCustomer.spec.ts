@@ -9,7 +9,7 @@ import type { Customer } from '../../utils/excelUtils';
 
 test.describe('JIRA 1 - Create Customer', () => {
 
-test('Test 1: End to End Flow scenario - should create a new customer and show success message',{ tag: ['@PlaywrightWithGitHubActions'] }, async ({ page }) => {
+test('Test 1: End to End Flow scenario - should create a new customer and show success message', async ({ page }) => {
   // Read test data from Excel
   const excelPath = path.resolve(__dirname, '../../test-data/AddNewCusotmer_TestData.xlsx');
   const customers = readExcel(excelPath);
@@ -42,7 +42,7 @@ test('Test 1: End to End Flow scenario - should create a new customer and show s
   }
 });
 
-test('Test 2: Duplicate Customer scenario - should show duplicate message when customer already exists', { tag: ['@PlaywrightWithGitHubActions'] }, async ({ page }) => {
+test('Test 2: Duplicate Customer scenario - should show duplicate message when customer already exists', async ({ page }) => {
     const managerPage = new ManagerPage(page);
     await managerPage.goto(urls.login);
     await managerPage.expectUrlMatch(/BankingProject\/\#\/login/);
@@ -95,7 +95,7 @@ test('Test 2: Duplicate Customer scenario - should show duplicate message when c
     }
   });
   
-test('Test 3: Field validation scenario - should require firstname lastname postcode for adding customer',{ tag: ['@PlaywrightWithGitHubActions'] }, async ({ page }) => {
+test('Test 3: Field validation scenario - should require firstname lastname postcode for adding customer', async ({ page }) => {
   const csvPath = path.resolve(__dirname, '../../test-data/AddCustomerFieldValidation.csv');
   const customerSets = readCsvSets(csvPath);
   for (const customerData of customerSets) {
