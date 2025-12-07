@@ -1,6 +1,5 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../../fixture/pagesFixture';
 import { getTestData } from '../../utils/csvUtils';
-import { ManagerPage } from '../../pages/managerPage';
 import { urls } from '../../utils/config';
 
 
@@ -9,9 +8,7 @@ test.describe('JIRA 2 - Open Customer Account', () => {
   testData.forEach((data) => {
     const Name = data['Name'];
     const Currency = data['Currency'];
-    test(`Test 1: Open Customer Account - should create account for ${Name} with ${Currency} currency and update Customer Record`,{ tag: ['@PlaywrightWithGitHubActions'] }, async ({ page }) => {
-     
-      const managerPage = new ManagerPage(page);
+    test(`Test 1: Open Customer Account - should create account for ${Name} with ${Currency} currency and update Customer Record`,{ tag: ['@PlaywrightWithGitHubActions'] }, async ({ page, managerPage }) => {
       console.log('test execution started for Open Account');
       console.log('Test Data:', { Name, Currency });
       if (!Currency) {
@@ -40,13 +37,10 @@ test.describe('JIRA 2 - Open Customer Account', () => {
       const accountCell = await row.locator('td').nth(3).textContent();
       expect(accountCell).toMatch(/\d+/);
       console.log(`Account number(s) for ${Name}: ${accountCell}`);
-      
     });
   });
 
-  test('Test 2: Verify available currencies - should list all available currencies',{ tag: ['@PlaywrightWithGitHubActions'] }, async ({ page }) => {
-  
-    const managerPage = new ManagerPage(page);
+  test('Test 2: Verify available currencies - should list all available currencies',{ tag: ['@PlaywrightWithGitHubActions'] }, async ({ page, managerPage }) => {
     console.log('test execution started for Verify Available Currencies in Open Account');
     await managerPage.goto(urls.login);
     await managerPage.loginAsManager();
@@ -57,6 +51,5 @@ test.describe('JIRA 2 - Open Customer Account', () => {
     expect(currencies).toEqual(expect.arrayContaining(['Dollar', 'Pound', 'Rupee']));
     console.log('Available currencies under Currency field:');
     currencies.forEach(c => console.log(c));
-
   });
 });
