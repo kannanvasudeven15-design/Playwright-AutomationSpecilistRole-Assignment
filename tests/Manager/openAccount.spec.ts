@@ -9,7 +9,7 @@ test.describe('JIRA 2 - Open Customer Account', () => {
   testData.forEach((data) => {
     const Name = data['Name'];
     const Currency = data['Currency'];
-    test(`Test 1: Open Customer Account - should create account for ${Name} with ${Currency} currency and update Customer Record`, async ({ page }) => {
+    test(`Test 1: Open Customer Account - should create account for ${Name} with ${Currency} currency and update Customer Record`,{ tag: ['@PlaywrightWithGitHubActions'] }, async ({ page }) => {
      
       const managerPage = new ManagerPage(page);
       console.log('Test Data:', { Name, Currency });
@@ -42,7 +42,7 @@ test.describe('JIRA 2 - Open Customer Account', () => {
     });
   });
 
-  test('Test 2: Verify available currencies - should list all available currencies', async ({ page }) => {
+  test('Test 2: Verify available currencies - should list all available currencies',{ tag: ['@PlaywrightWithGitHubActions'] }, async ({ page }) => {
   
     const managerPage = new ManagerPage(page);
     await managerPage.goto(urls.login);

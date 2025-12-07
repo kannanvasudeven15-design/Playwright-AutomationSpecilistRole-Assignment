@@ -1,8 +1,14 @@
 [
   {
-    "customerName": "Harry Potter",
+    "customerName": "Hermoine Granger",
     "depositAmount": 100,
-    "expectedWelcomeMessage": "Welcome Harry Potter !!",
+    "expectedWelcomeMessage": "Welcome Hermoine Granger !!",
+    "expectedTransactionType": "Credit"
+  },
+  {
+    "customerName": "Albus Dumbledore",
+    "depositAmount": 300,
+    "expectedWelcomeMessage": "Welcome Albus Dumbledore !!",
     "expectedTransactionType": "Credit"
   }
 ]

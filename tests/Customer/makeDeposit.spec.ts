@@ -5,7 +5,7 @@ import { CustomerPage } from '../../pages/customerPage';
 
 test.describe('JIRA 3: Customer Deposit Flow', () => {
   for (const data of testData) {
-    test(`Test 1: End to end flow - Deposit for ${data.customerName} - amount ${data.depositAmount}`, async ({ page }) => {
+    test(`Test 1: End to end flow - Deposit for ${data.customerName} - amount ${data.depositAmount}`,{ tag: ['@PlaywrightWithGitHubActions'] }, async ({ page }) => {
       const customerPage = new CustomerPage(page);
       await customerPage.navigateToCustomerLogin();
       await page.getByRole('combobox').selectOption({ label: data.customerName });
@@ -22,11 +22,13 @@ test.describe('JIRA 3: Customer Deposit Flow', () => {
       // Verify balance is updated
       const updatedBalance = parseInt(await customerPage.getBalance() || '0', 10);
       expect(updatedBalance).toBe(initialBalance + data.depositAmount);
-
+      
       // Verify transaction in table
+      await page.waitForTimeout(3000);
       await page.getByRole('button', { name: 'Transactions' }).click();
       const transactionTable = page.locator('table');
       await expect(transactionTable).toBeVisible({ timeout: 5000 });
+      await page.waitForSelector('table tbody tr');
 
       // Print all transaction rows and cells for debugging
       const allRows = await transactionTable.locator('tr').all();
@@ -57,7 +59,7 @@ test.describe('JIRA 3: Customer Deposit Flow', () => {
     });
   }
 
-   test('Test 2: Amount field validation - should show required field tooltip when deposit amount is empty', async ({ page }) => {
+   test('Test 2: Amount field validation - should show required field tooltip when deposit amount is empty',{ tag: ['@PlaywrightWithGitHubActions'] }, async ({ page }) => {
     const customerPage = new CustomerPage(page);
     const customerName = testData[0].customerName;
     await customerPage.navigateToCustomerLogin();
