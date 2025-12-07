@@ -12,6 +12,7 @@ test.describe('JIRA 2 - Open Customer Account', () => {
     test(`Test 1: Open Customer Account - should create account for ${Name} with ${Currency} currency and update Customer Record`,{ tag: ['@PlaywrightWithGitHubActions'] }, async ({ page }) => {
      
       const managerPage = new ManagerPage(page);
+      console.log('test execution started for Open Account');
       console.log('Test Data:', { Name, Currency });
       if (!Currency) {
         throw new Error(`Currency is undefined for customer: ${Name}`);
@@ -39,13 +40,14 @@ test.describe('JIRA 2 - Open Customer Account', () => {
       const accountCell = await row.locator('td').nth(3).textContent();
       expect(accountCell).toMatch(/\d+/);
       console.log(`Account number(s) for ${Name}: ${accountCell}`);
-      console.log("Success")
+      
     });
   });
 
   test('Test 2: Verify available currencies - should list all available currencies',{ tag: ['@PlaywrightWithGitHubActions'] }, async ({ page }) => {
   
     const managerPage = new ManagerPage(page);
+    console.log('test execution started for Verify Available Currencies');
     await managerPage.goto(urls.login);
     await managerPage.loginAsManager();
     await managerPage.clickOpenAccount();
