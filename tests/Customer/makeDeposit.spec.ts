@@ -10,7 +10,8 @@ const testData = JSON.parse(testDataRaw);
 test.describe('JIRA 3: Customer Deposit Flow', () => {
   {
     for (const data of testData) {
-      test(`Test 1: End to end flow - Deposit for ${data.customerName} - amount ${data.depositAmount}`, async ({ page, customerPage }) => {
+      test(`Test 1: End to end flow - Deposit for ${data.customerName} - amount ${data.depositAmount}`,{ tag: ['@PlaywrightWithGitHubActions'] }, async ({ page, customerPage }) => {
+        console.log(`Starting Test 1: End to end flow - Deposit for ${data.customerName} - amount ${data.depositAmount}`);
         await customerPage.navigateToCustomerLogin();
         await page.getByRole('combobox').selectOption({ label: data.customerName });
         await page.getByRole('button', { name: 'Login' }).click();
