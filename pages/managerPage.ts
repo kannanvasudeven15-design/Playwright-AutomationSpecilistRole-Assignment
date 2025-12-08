@@ -13,7 +13,8 @@ export class ManagerPage extends BasePage {
   }
 
   async clickAddCustomer() {
-    await this.clickByRole('button', 'Add Customer');
+    // Use strict mode safe selector for Add Customer button inside form
+    await this.clickByRole('button', 'Add Customer', 50000, { withinForm: true });
     await this.expectUrlMatch(/BankingProject\/\#\/manager\/addCust/);
   }
 

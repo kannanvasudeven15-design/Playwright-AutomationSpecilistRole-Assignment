@@ -1,6 +1,5 @@
 import { test, expect } from '../../fixture/pagesFixture';
 import path from 'path';
-import logger from '../../utils/logger';
 import fs from 'fs';
 import { readExcel } from '../../utils/excelUtils';
 import { readCsvSets, CustomerSet } from '../../utils/csvUtils';
@@ -10,12 +9,13 @@ test.describe('JIRA 1 - Create Customer', () => {
 
 test('Test 1: End to End Flow scenario - should create a new customer and show success message', async ({ page, managerPage }) => {
   // Read test data from Excel
-  const excelPath = path.resolve(__dirname, '../../test-data/AddNewCusotmer_TestData.xlsx');
+  const excelPath = path.resolve(process.cwd(), 'test-data/AddNewCusotmer_TestData.xlsx');
   const customers = readExcel(excelPath);
 
   for (const customer of customers) {
     await managerPage.goto(urls.login);
     await managerPage.expectUrlMatch(/BankingProject\/#\/login/);
+    await page.getByRole('button', { name: 'Home' }).click();
     await managerPage.loginAsManager();
     await managerPage.clickAddCustomer();
     await managerPage.fillCustomerDetails(
@@ -28,18 +28,21 @@ test('Test 1: End to End Flow scenario - should create a new customer and show s
       const match = dialog.message().match(/Customer added successfully with customer id :(\d+)/);
       if (match) {
         const customerId = match[1];
-        logger.info(`Customer added successfully. Customer ID: ${customerId}`);
+        // ...existing code...
       } else {
-        logger.warn(`Alert Text: ${dialog.message()}`);
+        // ...existing code...
       }
       await dialog.accept();
     });
-    await page.getByRole('form').getByRole('button', { name: 'Add Customer' }).click();
+    // Use a more specific selector for the Add Customer button to avoid strict mode violation
+    const addCustomerBtn = await page.getByRole('form').locator('button[type="submit"]:has-text("Add Customer")');
+    await addCustomerBtn.waitFor({ state: 'visible', timeout: 10000 });
+    await addCustomerBtn.click();
     await managerPage.clickCustomers();
     const customerRowSelector = `tr:has(td:text-is("${(customer as any).firstName}")):has(td:text-is("${(customer as any).lastName}")):has(td:text-is("${(customer as any).postCode}"))`;
     const newCustomerRow = page.locator(customerRowSelector);
     await expect(newCustomerRow).toBeVisible({ timeout: 5000 });
-    logger.info(`'${(customer as any).firstName} ${(customer as any).lastName}' is present in the Customer table.`);
+    // ...existing code...
   }
 });
 
@@ -64,7 +67,7 @@ test('Test 2: Duplicate Customer scenario - should show duplicate message when c
   }
 
   // Read customer details from test-data/duplicateCustomer-TestData.json
-  const testDataPath = path.resolve(__dirname, '../../test-data/duplicateCustomer-TestData.json');
+  const testDataPath = path.resolve(process.cwd(), 'test-data/duplicateCustomer-TestData.json');
   const testDataRaw = fs.readFileSync(testDataPath, 'utf-8');
   const testData = JSON.parse(testDataRaw);
   const customersToTest = Object.values(testData);
@@ -83,20 +86,22 @@ test('Test 2: Duplicate Customer scenario - should show duplicate message when c
     page.once('dialog', async dialog => {
       if (isDuplicate) {
         expect(dialog.message()).toBe('Please check the details. Customer may be duplicate.');
-        logger.warn(`Customer '${cust.firstName} ${cust.lastName}' is already existing in the customer table.`);
+        // ...existing code...
       } else {
         expect(dialog.message()).toMatch(/^Customer added successfully with customer id :\d+$/);
-        logger.info(`Customer '${cust.firstName} ${cust.lastName}' added successfully.`);
+        // ...existing code...
       }
       await dialog.accept();
     });
-    await page.getByRole('form').getByRole('button', { name: 'Add Customer' }).click();
+    const addCustomerBtn2 = await page.getByRole('form').locator('button[type="submit"]:has-text("Add Customer")');
+    await addCustomerBtn2.waitFor({ state: 'visible', timeout: 10000 });
+    await addCustomerBtn2.click();
     await managerPage.clickCustomers();
   }
 });
 
 test('Test 3: Field validation scenario - should require firstname lastname postcode for adding customer', async ({ page, managerPage }) => {
-  const csvPath = path.resolve(__dirname, '../../test-data/AddCustomerFieldValidation.csv');
+  const csvPath = path.resolve(process.cwd(), 'test-data/AddCustomerFieldValidation.csv');
   const customerSets = readCsvSets(csvPath);
   for (const customerData of customerSets) {
     await managerPage.goto(urls.login);
@@ -105,31 +110,42 @@ test('Test 3: Field validation scenario - should require firstname lastname post
     await managerPage.clickAddCustomer();
 
     // 1. Fill only Last Name and Postcode. Attempt to submit the form without filling First Name.
+    await page.getByRole('form').waitFor({ state: 'visible', timeout: 10000 });
     await managerPage.fillCustomerDetails('', customerData['Last Name'], customerData['Post Code']);
-    await page.getByRole('form').getByRole('button', { name: 'Add Customer' }).click();
+    const addBtn1 = page.getByRole('form').locator('button[type="submit"]:has-text("Add Customer")');
+    await addBtn1.waitFor({ state: 'visible', timeout: 10000 });
+    await addBtn1.click();
     const firstNameInput = page.getByRole('textbox', { name: 'First Name' });
+    await firstNameInput.waitFor({ state: 'visible', timeout: 10000 });
     const firstNameError = await firstNameInput.evaluate(input => (input as HTMLInputElement).validationMessage);
     expect(firstNameError).toBe('Please fill in this field.');
-    await page.getByRole('button', { name: 'Home' }).click();
-    await managerPage.loginAsManager();
+    // Reset form for next attempt
     await managerPage.clickAddCustomer();
+
+
 
     // 2. Fill only First Name and Postcode. Attempt to submit the form without filling Last Name.
     await managerPage.fillCustomerDetails(customerData['First Name'], '', customerData['Post Code']);
-    await page.getByRole('form').getByRole('button', { name: 'Add Customer' }).click();
+    const addBtn2 = page.getByRole('form').locator('button[type="submit"]:has-text("Add Customer")');
+    await addBtn2.waitFor({ state: 'visible', timeout: 10000 });
+    await addBtn2.click();
     const lastNameInput = page.getByRole('textbox', { name: 'Last Name' });
+    await lastNameInput.waitFor({ state: 'visible', timeout: 10000 });
     const lastNameError = await lastNameInput.evaluate(input => (input as HTMLInputElement).validationMessage);
     expect(lastNameError).toBe('Please fill in this field.');
-    await page.getByRole('button', { name: 'Home' }).click();
-    await managerPage.loginAsManager();
+    // Reset form for next attempt
     await managerPage.clickAddCustomer();
 
     // 3. Fill only First Name and Last Name. Attempt to submit the form without filling Postcode.
     await managerPage.fillCustomerDetails(customerData['First Name'], customerData['Last Name'], '');
-    await page.getByRole('form').getByRole('button', { name: 'Add Customer' }).click();
+    const addBtn3 = page.getByRole('form').locator('button[type="submit"]:has-text("Add Customer")');
+    await addBtn3.waitFor({ state: 'visible', timeout: 10000 });
+    await addBtn3.click();
     const postCodeInput = page.getByRole('textbox', { name: 'Post Code' });
+    await postCodeInput.waitFor({ state: 'visible', timeout: 10000 });
     const postCodeError = await postCodeInput.evaluate(input => (input as HTMLInputElement).validationMessage);
     expect(postCodeError).toBe('Please fill in this field.');
+
   }
 });
 

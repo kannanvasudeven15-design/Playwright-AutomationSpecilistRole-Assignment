@@ -19,8 +19,14 @@ export class BasePage {
     }
   }
 
-  async clickByRole(role: string, name: string, timeout = 50000) {
-    const element = this.page.getByRole(role as any, { name });
+  async clickByRole(role: string, name: string, timeout = 50000, options?: { withinForm?: boolean }) {
+    let element;
+    if (options?.withinForm) {
+      // Use a more specific selector for strict mode: button inside form
+      element = this.page.getByRole('form').locator('button[type="submit"]:has-text("' + name + '")');
+    } else {
+      element = this.page.getByRole(role as any, { name });
+    }
     await expect(element).toBeVisible({ timeout });
     await expect(element).toBeEnabled({ timeout });
     await element.click();
