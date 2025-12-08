@@ -40,4 +40,9 @@ export class BasePage {
   async expectUrlMatch(regex: RegExp, timeout = 10000) {
     await expect(this.page).toHaveURL(regex, { timeout });
   }
+
+  async getValidationMessageForTextbox(name: string): Promise<string> {
+    const input = await this.page.getByRole('textbox', { name });
+    return input.evaluate((el) => (el instanceof HTMLInputElement ? el.validationMessage : ''));
+  }
 }

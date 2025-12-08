@@ -1,13 +1,19 @@
 import { test, expect } from '../../fixture/pagesFixture';
+test.use({ browserName: 'chromium' });
+test.use({ browserName: 'webkit' });
+test.use({ browserName: 'firefox' });
 import path from 'path';
 import fs from 'fs';
 import { readExcel } from '../../utils/excelUtils';
-import { readCsvSets, CustomerSet } from '../../utils/csvUtils';
+import { readCsvSets } from '../../utils/csvUtils';
 import { urls } from '../../utils/config';
+
+const csvPath = require('path').resolve(process.cwd(), 'test-data/AddCustomerFieldValidation.csv');
+const customerSets = readCsvSets(csvPath);
 
 test.describe('JIRA 1 - Create Customer', () => {
 
-test('Test 1: End to End Flow scenario - should create a new customer and show success message', async ({ page, managerPage }) => {
+test('Test 1: End to End Flow scenario - should create a new customer and show success message', { tag: ['@PlaywrightWithGitHubActions'] },async ({ page, managerPage }) => {
   // Read test data from Excel
   const excelPath = path.resolve(process.cwd(), 'test-data/AddNewCusotmer_TestData.xlsx');
   const customers = readExcel(excelPath);
@@ -100,55 +106,39 @@ test('Test 2: Duplicate Customer scenario - should show duplicate message when c
   }
 });
 
-test('Test 3: Field validation scenario - should require firstname lastname postcode for adding customer', async ({ page, managerPage }) => {
-  const csvPath = path.resolve(process.cwd(), 'test-data/AddCustomerFieldValidation.csv');
-  const customerSets = readCsvSets(csvPath);
-  for (const customerData of customerSets) {
-    await managerPage.goto(urls.login);
-    await managerPage.expectUrlMatch(/BankingProject\/#\/login/);
-    await managerPage.loginAsManager();
-    await managerPage.clickAddCustomer();
-
-    // 1. Fill only Last Name and Postcode. Attempt to submit the form without filling First Name.
-    await page.getByRole('form').waitFor({ state: 'visible', timeout: 10000 });
-    await managerPage.fillCustomerDetails('', customerData['Last Name'], customerData['Post Code']);
-    const addBtn1 = page.getByRole('form').locator('button[type="submit"]:has-text("Add Customer")');
-    await addBtn1.waitFor({ state: 'visible', timeout: 10000 });
-    await addBtn1.click();
-    const firstNameInput = page.getByRole('textbox', { name: 'First Name' });
-    await firstNameInput.waitFor({ state: 'visible', timeout: 10000 });
-    const firstNameError = await firstNameInput.evaluate(input => (input as HTMLInputElement).validationMessage);
-    expect(firstNameError).toBe('Please fill in this field.');
-    // Reset form for next attempt
-    await managerPage.clickAddCustomer();
-
-
-
-    // 2. Fill only First Name and Postcode. Attempt to submit the form without filling Last Name.
-    await managerPage.fillCustomerDetails(customerData['First Name'], '', customerData['Post Code']);
-    const addBtn2 = page.getByRole('form').locator('button[type="submit"]:has-text("Add Customer")');
-    await addBtn2.waitFor({ state: 'visible', timeout: 10000 });
-    await addBtn2.click();
-    const lastNameInput = page.getByRole('textbox', { name: 'Last Name' });
-    await lastNameInput.waitFor({ state: 'visible', timeout: 10000 });
-    const lastNameError = await lastNameInput.evaluate(input => (input as HTMLInputElement).validationMessage);
-    expect(lastNameError).toBe('Please fill in this field.');
-    // Reset form for next attempt
-    await managerPage.clickAddCustomer();
-
-    // 3. Fill only First Name and Last Name. Attempt to submit the form without filling Postcode.
-    await managerPage.fillCustomerDetails(customerData['First Name'], customerData['Last Name'], '');
-    const addBtn3 = page.getByRole('form').locator('button[type="submit"]:has-text("Add Customer")');
-    await addBtn3.waitFor({ state: 'visible', timeout: 10000 });
-    await addBtn3.click();
-    const postCodeInput = page.getByRole('textbox', { name: 'Post Code' });
-    await postCodeInput.waitFor({ state: 'visible', timeout: 10000 });
-    const postCodeError = await postCodeInput.evaluate(input => (input as HTMLInputElement).validationMessage);
-    expect(postCodeError).toBe('Please fill in this field.');
-
+  for (const set of customerSets) {
+    test(`Test 3: Field Validation scenario: ${set.scenario}`, async ({ managerPage, basePage }) => {
+      await basePage.goto('https://www.globalsqa.com/angularJs-protractor/BankingProject/#/login');
+      await managerPage.loginAsManager();
+      await managerPage.clickAddCustomer();
+      await managerPage.fillCustomerDetails(set['First Name'], set['Last Name'], set['Post Code']);
+      await managerPage.submitAddCustomerForm();
+      // Validate all required fields are filled
+      if (!set['First Name']) {
+        const validationMessage = await basePage.getValidationMessageForTextbox('First Name');
+        expect([
+          'Please fill in this field.',
+          'Fill out this field'
+        ]).toContain(validationMessage);
+      }
+      if (!set['Last Name']) {
+        const validationMessage = await basePage.getValidationMessageForTextbox('Last Name');
+        expect([
+          'Please fill in this field.',
+          'Fill out this field'
+        ]).toContain(validationMessage);
+      }
+      if (!set['Post Code']) {
+        const validationMessage = await basePage.getValidationMessageForTextbox('Post Code');
+        expect([
+          'Please fill in this field.',
+          'Fill out this field'
+        ]).toContain(validationMessage);
+      }
+      await basePage.clickByRole('button', 'Home');
+      await basePage.expectUrlMatch(/BankingProject\/\#\/login/);
+    });
   }
-});
-
 });
 
 
