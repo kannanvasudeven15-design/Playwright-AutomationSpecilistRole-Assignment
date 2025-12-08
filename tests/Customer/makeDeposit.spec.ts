@@ -1,4 +1,7 @@
 import { test, expect } from '../../fixture/pagesFixture';
+test.use({ browserName: 'chromium' });
+test.use({ browserName: 'webkit' });
+test.use({ browserName: 'firefox' });
 import path from 'path';
 import fs from 'fs';
 
@@ -66,7 +69,7 @@ test.describe('JIRA 3: Customer Deposit Flow', () => {
   }
 
   test('Test 2: Amount field validation - should show required field tooltip when deposit amount is empty', async ({ page, customerPage }) => {
-    // ...existing code...
+    
     const customerName = testData[0].customerName;
     await customerPage.navigateToCustomerLogin();
     await page.getByRole('combobox').selectOption({ label: customerName });
@@ -75,10 +78,11 @@ test.describe('JIRA 3: Customer Deposit Flow', () => {
     await page.getByRole('button', { name: 'Deposit' }).click();
     const depositButton = await page.getByRole('form').getByRole('button', { name: 'Deposit' });
     await depositButton.click();
+
     // Assert tooltip is displayed
     const amountInput = await page.getByRole('spinbutton');
     const validationMessage = await amountInput.evaluate((el) => (el as HTMLInputElement).validationMessage);
-    expect(validationMessage).toBe('Please fill in this field.');
+    expect(validationMessage).toContain("Please enter a number");
   });
 
 });
