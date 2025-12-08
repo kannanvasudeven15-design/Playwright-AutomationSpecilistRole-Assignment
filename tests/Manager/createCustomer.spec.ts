@@ -14,6 +14,8 @@ const customerSets = readCsvSets(csvPath);
 test.describe('JIRA 1 - Create Customer', () => {
 
 test('Test 1: End to End Flow scenario - should create a new customer and show success message', { tag: ['@PlaywrightWithGitHubActions'] },async ({ page, managerPage }) => {
+  
+  console.log('Starting Test 1: End to End Flow scenario - should create a new customer and show success message');
   // Read test data from Excel
   const excelPath = path.resolve(process.cwd(), 'test-data/AddNewCusotmer_TestData.xlsx');
   const customers = readExcel(excelPath);
