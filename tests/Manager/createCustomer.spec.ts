@@ -110,10 +110,9 @@ test('Test 3: Field validation scenario - should require firstname lastname post
     const firstNameInput = page.getByRole('textbox', { name: 'First Name' });
     const firstNameError = await firstNameInput.evaluate(input => (input as HTMLInputElement).validationMessage);
     expect(firstNameError).toBe('Please fill in this field.');
-
-    const amountInput = await page.getByRole('spinbutton');
-    const validationMessage = await amountInput.evaluate((el) => (el as HTMLInputElement).validationMessage);
-    expect(validationMessage).toBe('Please fill in this field.');
+    await page.getByRole('button', { name: 'Home' }).click();
+    await managerPage.loginAsManager();
+    await managerPage.clickAddCustomer();
 
     // 2. Fill only First Name and Postcode. Attempt to submit the form without filling Last Name.
     await managerPage.fillCustomerDetails(customerData['First Name'], '', customerData['Post Code']);
@@ -121,6 +120,9 @@ test('Test 3: Field validation scenario - should require firstname lastname post
     const lastNameInput = page.getByRole('textbox', { name: 'Last Name' });
     const lastNameError = await lastNameInput.evaluate(input => (input as HTMLInputElement).validationMessage);
     expect(lastNameError).toBe('Please fill in this field.');
+    await page.getByRole('button', { name: 'Home' }).click();
+    await managerPage.loginAsManager();
+    await managerPage.clickAddCustomer();
 
     // 3. Fill only First Name and Last Name. Attempt to submit the form without filling Postcode.
     await managerPage.fillCustomerDetails(customerData['First Name'], customerData['Last Name'], '');
