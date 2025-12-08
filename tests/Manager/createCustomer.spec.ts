@@ -1,5 +1,6 @@
 import { test, expect } from '../../fixture/pagesFixture';
 import path from 'path';
+import logger from '../../utils/logger';
 import fs from 'fs';
 import { readExcel } from '../../utils/excelUtils';
 import { readCsvSets, CustomerSet } from '../../utils/csvUtils';
@@ -27,9 +28,9 @@ test('Test 1: End to End Flow scenario - should create a new customer and show s
       const match = dialog.message().match(/Customer added successfully with customer id :(\d+)/);
       if (match) {
         const customerId = match[1];
-        console.log(`Customer added successfully. Customer ID: ${customerId}`);
+        logger.info(`Customer added successfully. Customer ID: ${customerId}`);
       } else {
-        console.log('Alert Text:', dialog.message());
+        logger.warn(`Alert Text: ${dialog.message()}`);
       }
       await dialog.accept();
     });
@@ -38,7 +39,7 @@ test('Test 1: End to End Flow scenario - should create a new customer and show s
     const customerRowSelector = `tr:has(td:text-is("${(customer as any).firstName}")):has(td:text-is("${(customer as any).lastName}")):has(td:text-is("${(customer as any).postCode}"))`;
     const newCustomerRow = page.locator(customerRowSelector);
     await expect(newCustomerRow).toBeVisible({ timeout: 5000 });
-    console.log(`'${(customer as any).firstName} ${(customer as any).lastName}' is present in the Customer table.`);
+    logger.info(`'${(customer as any).firstName} ${(customer as any).lastName}' is present in the Customer table.`);
   }
 });
 
@@ -82,10 +83,10 @@ test('Test 2: Duplicate Customer scenario - should show duplicate message when c
     page.once('dialog', async dialog => {
       if (isDuplicate) {
         expect(dialog.message()).toBe('Please check the details. Customer may be duplicate.');
-        console.log(`Customer '${cust.firstName} ${cust.lastName}' is already existing in the customer table.`);
+        logger.warn(`Customer '${cust.firstName} ${cust.lastName}' is already existing in the customer table.`);
       } else {
         expect(dialog.message()).toMatch(/^Customer added successfully with customer id :\d+$/);
-        console.log(`Customer '${cust.firstName} ${cust.lastName}' added successfully.`);
+        logger.info(`Customer '${cust.firstName} ${cust.lastName}' added successfully.`);
       }
       await dialog.accept();
     });
@@ -109,6 +110,10 @@ test('Test 3: Field validation scenario - should require firstname lastname post
     const firstNameInput = page.getByRole('textbox', { name: 'First Name' });
     const firstNameError = await firstNameInput.evaluate(input => (input as HTMLInputElement).validationMessage);
     expect(firstNameError).toBe('Please fill in this field.');
+
+    const amountInput = await page.getByRole('spinbutton');
+    const validationMessage = await amountInput.evaluate((el) => (el as HTMLInputElement).validationMessage);
+    expect(validationMessage).toBe('Please fill in this field.');
 
     // 2. Fill only First Name and Postcode. Attempt to submit the form without filling Last Name.
     await managerPage.fillCustomerDetails(customerData['First Name'], '', customerData['Post Code']);

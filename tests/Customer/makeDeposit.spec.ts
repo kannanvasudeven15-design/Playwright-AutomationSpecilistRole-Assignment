@@ -1,5 +1,6 @@
 import { test, expect } from '../../fixture/pagesFixture';
 import testData from '../../test-data/makeDeposit_TestData.json';
+import logger from '../../utils/logger';
 
 
 test.describe('JIRA 3: Customer Deposit Flow', () => {
@@ -33,7 +34,7 @@ test.describe('JIRA 3: Customer Deposit Flow', () => {
         const allRows = await transactionTable.locator('tr').all();
         for (const [i, row] of allRows.entries()) {
           const cells = await row.locator('td').allTextContents();
-          console.log(`Row ${i}:`, cells);
+          logger.info(`Row ${i}: ${JSON.stringify(cells)}`);
         }
 
         // Retry finding the transaction row for up to 5 seconds
@@ -60,7 +61,7 @@ test.describe('JIRA 3: Customer Deposit Flow', () => {
   }
 
   test('Test 2: Amount field validation - should show required field tooltip when deposit amount is empty', async ({ page, customerPage }) => {
-    console.log('Verify tooltip for empty deposit amount');
+    logger.info('Verify tooltip for empty deposit amount');
     const customerName = testData[0].customerName;
     await customerPage.navigateToCustomerLogin();
     await page.getByRole('combobox').selectOption({ label: customerName });
