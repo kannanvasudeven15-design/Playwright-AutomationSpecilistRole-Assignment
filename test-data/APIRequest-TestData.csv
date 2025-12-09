@@ -1,4 +1,4 @@
 firstName,lastName,postCode,expectedAlert,expectedStatus,expectedCustomerPresent
 Mike,Wilson,WN1 1AA,"Customer added successfully with customer id :123",201,true
-,N/A,WN1 1AA,"Please fill in this field. or Please fill out this field",400,false
+,N/A,WN1 1AA,"Please fill in this field. or Please fill out this field. or Fill out this field",400,false
 Neville,Longbottom,E89898,"Please check the details. Customer may be duplicate.",409,false
