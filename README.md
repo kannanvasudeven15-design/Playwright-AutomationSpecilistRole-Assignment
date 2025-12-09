@@ -101,8 +101,7 @@ tests/API Mocking/AddCustomer_APIRequestMocking.spec.ts
 https://github.com/kannanvasudeven15-design/Playwright-AutomationSpecilistRole-Assignment.git
 
 **5. Allure Report**
-npx allure generate ./allure-results --clean -o ./allure-report
-npx allure open ./allure-report
+npx allure serve allure-results
 
 
 
