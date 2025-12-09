@@ -96,6 +96,9 @@ Test 1: Add currency using APIMocking from HAR file
  ***CI Integration with GitHubActions***
  playwright.yml
 
+***Git Repository***
+https://github.com/kannanvasudeven15-design/Playwright-AutomationSpecilistRole-Assignment.git
+
 **5. Test Spec names for test execution**
 tests/Manager/createCustomer.spec.ts
 tests/Manager/openAccount.spec.ts
