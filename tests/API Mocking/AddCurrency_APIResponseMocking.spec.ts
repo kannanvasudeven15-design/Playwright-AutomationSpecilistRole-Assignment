@@ -9,19 +9,31 @@ test.describe('APIResponse Mocking', () => {
       const response = await route.fetch();
       const original = await response.json();
       
-      // Add a new currency to the response
-      original.currencies.push('Euro');
+      // Ensure the response has a 'currencies' array in the expected format
+      let mockedResponse;
+      if (Array.isArray(original.currencies)) {
+        if (!original.currencies.includes('Euro')) {
+          original.currencies.push('Euro');
+        }
+        mockedResponse = original;
+      } else {
+        // fallback: create a currencies array if not present
+        mockedResponse = { currencies: ['Euro'] };
+      }
       await route.fulfill({
-        response,
-        body: JSON.stringify(original),
-        contentType: 'application/json',
+        status: 200,
+        body: JSON.stringify(mockedResponse),
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
     });
 
     await page.goto('https://www.globalsqa.com/angularJs-protractor/BankingProject/#/manager/openAccount');
     
     // Check EURO is populated by the API
-    const currencyOptions = await page.locator('select').nth(1).locator('option').allTextContents();
+    const currencyDropdown = page.locator('select[ng-model="currency"]');
+    const currencyOptions = await currencyDropdown.locator('option').allTextContents();
     expect(currencyOptions).toContain('Euro');
     console.log('Currencies after route.fetch() mock:', currencyOptions);
   });

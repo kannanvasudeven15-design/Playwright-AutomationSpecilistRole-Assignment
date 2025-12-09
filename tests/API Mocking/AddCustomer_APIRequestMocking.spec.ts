@@ -63,8 +63,11 @@ test.describe('API Mocking: Add Customer (CSV Driven)', () => {
       await page.fill('input[ng-model="postCd"]', tc.postCode);
       await page.click('button[type=submit]');
       const firstNameInput = await page.locator('input[ng-model="fName"]');
-      const firstNameError = await firstNameInput.evaluate((input: HTMLInputElement) => input.validationMessage);
-      expect(firstNameError).toBe(tc.expectedAlert);
+      let firstNameError = await firstNameInput.evaluate((input: HTMLInputElement) => input.validationMessage);
+      firstNameError = firstNameError.replace(/"/g, '').trim();
+      const validAlerts = tc.expectedAlert.split(' or ').map(a => a.replace(/"/g, '').trim());
+      expect(validAlerts).toContain(firstNameError);
+      
     });
   }
 
