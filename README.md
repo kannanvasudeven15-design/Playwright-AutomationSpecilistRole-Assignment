@@ -86,19 +86,21 @@ APIRequestMocking (Data Driven Parametrisation using CSV)
 Test 1: APIRequest Success Response for Adding New Customer
 Test 2: APIRequest Error Response for missing first name while Adding Customer
 Test 3: APIRequest Duplicate Response while adding existing customer
- 
+
+***Test Execution***
+Run the tests
+tests/Manager/createCustomer.spec.ts
+tests/Manager/openAccount.spec.ts
+tests/Customer/makeDeposit.spec.ts
+tests/API Mocking/AddCustomer_APIRequestMocking.spec.ts
+
  ***CI Integration with GitHubActions***
  playwright.yml
 
 ***Git Repository***
 https://github.com/kannanvasudeven15-design/Playwright-AutomationSpecilistRole-Assignment.git
 
-**5. Test Spec names for test execution**
-tests/Manager/createCustomer.spec.ts
-tests/Manager/openAccount.spec.ts
-tests/Customer/makeDeposit.spec.ts
-
-**6. Allure Report**
+**5. Allure Report**
 npx allure generate ./allure-results --clean -o ./allure-report
 npx allure open ./allure-report
 
