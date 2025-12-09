@@ -86,12 +86,6 @@ APIRequestMocking (Data Driven Parametrisation using CSV)
 Test 1: APIRequest Success Response for Adding New Customer
 Test 2: APIRequest Error Response for missing first name while Adding Customer
 Test 3: APIRequest Duplicate Response while adding existing customer
-
-APIResponseMocking
-Test 1: APIResponse to add new currency (EURO)
-
-APIMocking from HAR file
-Test 1: Add currency using APIMocking from HAR file
  
  ***CI Integration with GitHubActions***
  playwright.yml
