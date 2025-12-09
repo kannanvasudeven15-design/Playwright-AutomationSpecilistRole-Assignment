@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
 
-// Example: Mocking API response using route.fetch()
-test.describe('API Mocking: route.fetch()', () => {
-  test('should mock and verify currency API using route.fetch()', async ({ page }) => {
+// Mocking API response
+test.describe('APIResponse Mocking', () => {
+  test('should mock and verify currency', async ({ page }) => {
     await page.route('**/api/currencies', async (route, request) => {
       
         // Forward the request and modify the response
@@ -20,7 +20,7 @@ test.describe('API Mocking: route.fetch()', () => {
 
     await page.goto('https://www.globalsqa.com/angularJs-protractor/BankingProject/#/manager/openAccount');
     
-    // Assume the select element is populated by the API
+    // Check EURO is populated by the API
     const currencyOptions = await page.locator('select').nth(1).locator('option').allTextContents();
     expect(currencyOptions).toContain('Euro');
     console.log('Currencies after route.fetch() mock:', currencyOptions);

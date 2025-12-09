@@ -23,9 +23,13 @@ test.describe('JIRA 3: Customer Deposit Flow', () => {
         // Capture initial balance
         const initialBalance = parseInt(await customerPage.getBalance() || '0', 10);
 
-        // Deposit money using abstraction
+        // Deposit money
         await customerPage.makeDeposit(data.depositAmount);
         await expect(page.getByText('Deposit Successful')).toBeVisible({ timeout: 5000 });
+        const successMessage = page.getByText('Deposit Successful');
+        const color = await successMessage.evaluate((el) => getComputedStyle(el).color);
+	      expect(color).toBe('rgb(255, 0, 0)');
+
 
         // Verify balance is updated
         const updatedBalance = parseInt(await customerPage.getBalance() || '0', 10);
@@ -42,10 +46,9 @@ test.describe('JIRA 3: Customer Deposit Flow', () => {
         const allRows = await transactionTable.locator('tr').all();
         for (const [i, row] of allRows.entries()) {
           const cells = await row.locator('td').allTextContents();
-          // ...existing code...
         }
 
-        // Retry finding the transaction row for up to 5 seconds
+        // Retry finding the transaction row 
         let found = false;
         for (let i = 0; i < 10; i++) {
           const rows = await transactionTable.locator('tr').all();

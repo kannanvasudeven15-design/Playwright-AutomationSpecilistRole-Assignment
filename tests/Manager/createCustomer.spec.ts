@@ -13,7 +13,7 @@ const customerSets = readCsvSets(csvPath);
 
 test.describe('JIRA 1 - Create Customer', () => {
 
-test('Test 1: End to End Flow scenario - should create a new customer and show success message', { tag: ['@PlaywrightWithGitHubActions'] },async ({ page, managerPage }) => {
+test('Test 1: End to End Flow scenario - should create a new customer and show success message', async ({ page, managerPage }) => {
   
   console.log('Starting Test 1: End to End Flow scenario - should create a new customer and show success message');
   // Read test data from Excel
@@ -54,7 +54,7 @@ test('Test 1: End to End Flow scenario - should create a new customer and show s
   }
 });
 
-test('Test 2: Duplicate Customer scenario - should show duplicate message when customer already exists', async ({ page, managerPage }) => {
+test('Test 2: Duplicate Customer scenario - should show duplicate message when customer already exists',{ tag: ['@PlaywrightWithGitHubActions'] }, async ({ page, managerPage }) => {
   await managerPage.goto(urls.login);
   await managerPage.expectUrlMatch(/BankingProject\/#\/login/);
   await managerPage.loginAsManager();
