@@ -26,7 +26,7 @@ test.describe('Bank Manager Customer Page Visual Test', () => {
     // Click on Add Customer and add details
     await page.getByRole('button', { name: 'Add Customer' }).click();
     await page.getByPlaceholder('First Name').fill('John');
-    await page.getByPlaceholder('Last Name').fill('Duke');
+    await page.getByPlaceholder('Last Name').fill('Denver');
     await page.getByPlaceholder('Post Code').fill('WN50JR');
     await page.locator('form').getByRole('button', { name: 'Add Customer' }).click();
 
