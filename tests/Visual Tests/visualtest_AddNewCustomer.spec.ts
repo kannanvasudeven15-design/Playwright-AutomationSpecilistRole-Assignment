@@ -1,46 +1,25 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../../fixture/pagesFixture';
+import { urls } from '../../utils/config';
 
+test.describe('Bank Manager - Add New Customer Visual Test', () => {
+  test('should add a new customer and verify visually', async ({ managerPage, page }) => {
 
-test.describe('Bank Manager Customer Page Visual Test', () => {
-  test('should navigate to Customer page and take screenshot', async ({ page }) => {
-    
-    // Navigate to login page
-    await page.goto('https://www.globalsqa.com/angularJs-protractor/BankingProject/#/login');
-   
-    // Click on Bank Manager Login (role-based selector)
-    await page.getByRole('button', { name: 'Bank Manager Login' }).click();
-    
-    // Wait for navigation to manager dashboard
-    await expect(page.getByRole('button', { name: 'Add Customer' })).toBeVisible({ timeout: 5000 });
-    
-    // Click on Customers button
-    await page.getByRole('button', { name: 'Customers' }).click();
-    
-    // Wait for Customer table to be visible
+    await managerPage.goto(urls.login);
+    await managerPage.loginAsManager();
+    await managerPage.clickCustomers();
     await expect(page.getByRole('table')).toBeVisible({ timeout: 5000 });
-
-   
-    // Take screenshot of Customer page for Visual test
     await expect(page).toHaveScreenshot('customer-page.png', { fullPage: true });
-    
-    // Click on Add Customer and add details
-    await page.getByRole('button', { name: 'Add Customer' }).click();
-    await page.getByPlaceholder('First Name').fill('John');
-    await page.getByPlaceholder('Last Name').fill('Denver');
-    await page.getByPlaceholder('Post Code').fill('WN50JR');
-    await page.locator('form').getByRole('button', { name: 'Add Customer' }).click();
 
-    // Click on Customers button
-    await page.getByRole('button', { name: 'Customers' }).click();
+    await managerPage.clickAddCustomer();
+    await managerPage.fillCustomerDetails('John', 'Hulk', 'WN50JR');
+    page.once('dialog', async (dialog) => await dialog.accept());
+    await managerPage.submitAddCustomerForm();
 
-    // Scroll the customer table into view to ensure the newly added customer is visible
-    const customerTable = await page.getByRole('table');
+    await managerPage.clickCustomers();
+    const customerTable = page.getByRole('table');
     await customerTable.scrollIntoViewIfNeeded();
     await page.waitForTimeout(500);
-    
 
-    //Compare screenshot after adding customer
-    await expect(page).toHaveScreenshot('customer-page.png', { fullPage: true }); 
-
+    await expect(page).toHaveScreenshot('customer-page.png', { fullPage: true });
   });
 });
