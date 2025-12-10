@@ -41,6 +41,11 @@ I implemented the solution using Playwright with TypeScript, following the Page 
 │   ├── csvUtils.ts
 │   └── excelUtils.ts
 
+***package.json**
+
+***playwright.config.ts***
+Configured for Chromium, Firefox, and WebKit
+
 **Page Object Model (POM) Design**
 
 I have created three Page Object Model classes — BasePage, ManagerPage, and CustomerPage — to structure UI automation.
@@ -62,9 +67,6 @@ configUtil.ts: Provides helper functions for reading configuration values.
 csvUtils.ts: Handles reading and writing CSV files for test data.
 excelUtils.ts: Enables Excel-based data-driven testing for parameterization.
 
-***Cross-Browser Support***
-Configured for Chromium, Firefox, and WebKit.
-
 ***Automated Tests for User Stories***
 ***tests/Manager***
 JIRA-1: Bank Manager Operations - Create a customer
@@ -80,16 +82,16 @@ Test 2: Verify available currencies
 JIRA-3: Bank Customer Operations - Make a deposit
 Test 1: E2E - Deposit amount for customer (Data Driven Parametrisation using JSON ) and validate the successful message is displayed in RED
 Test 2: Amount field validation
- 
+
+***tests/Visual Tests***
+Test 1: Bank Manager Add Customer Visual Test
+Test 2: Bank Manager Open Account Visual Test
+
 ***tests/API Mocking**
 APIRequestMocking (Data Driven Parametrisation using CSV)
 Test 1: APIRequest Success Response for Adding New Customer
 Test 2: APIRequest Error Response for missing first name while Adding Customer
 Test 3: APIRequest Duplicate Response while adding existing customer
-
-***tests/Visual Tests***
-Test 1: Bank Manager Add Customer Visual Test
-Test 2: Bank Manager Open Account Visual Test
 
 ***Test Execution***
 Run the tests
@@ -97,15 +99,19 @@ tests/Manager/createCustomer.spec.ts
 tests/Manager/openAccount.spec.ts
 tests/Customer/makeDeposit.spec.ts
 tests/API Mocking/AddCustomer_APIRequestMocking.spec.ts
+tests/Visual Tests/visualtest_AddNewCustomer.spec.ts
+tests/Visual Tests/visualtest_OpenAccount.spec.ts
 
- ***CI Integration with GitHubActions***
+**Allure Report**
+npx allure serve allure-results
+
+***CI Integration with GitHubActions***
  playwright.yml
 
 ***Git Repository***
 https://github.com/kannanvasudeven15-design/Playwright-AutomationSpecilistRole-Assignment.git
 
-**5. Allure Report**
-npx allure serve allure-results
+
 
 
 
