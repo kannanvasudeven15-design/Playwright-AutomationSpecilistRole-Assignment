@@ -36,9 +36,9 @@ test('Test 1: End to End Flow scenario - should create a new customer and show s
       const match = dialog.message().match(/Customer added successfully with customer id :(\d+)/);
       if (match) {
         const customerId = match[1];
-        // ...existing code...
+       
       } else {
-        // ...existing code...
+        
       }
       await dialog.accept();
     });

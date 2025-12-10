@@ -87,6 +87,10 @@ Test 1: APIRequest Success Response for Adding New Customer
 Test 2: APIRequest Error Response for missing first name while Adding Customer
 Test 3: APIRequest Duplicate Response while adding existing customer
 
+***tests/Visual Tests***
+Test 1: Bank Manager Customer Page Visual Test - Add Customer
+Test 2: Bank Manager Open Account Page Visual Test - Open Account
+
 ***Test Execution***
 Run the tests
 tests/Manager/createCustomer.spec.ts
