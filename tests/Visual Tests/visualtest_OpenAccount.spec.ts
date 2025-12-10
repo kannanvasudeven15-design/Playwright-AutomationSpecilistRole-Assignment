@@ -13,7 +13,7 @@ test.describe('Bank Manager - Open Account Visual Test', () => {
     await managerPage.clickOpenAccount();
     await expect(page.getByRole('form')).toBeVisible({ timeout: 5000 });
 
-    // Select customer and currency using Playwright locators
+    // Select customer and currency
     await page.locator('label:text("Customer :") + select').selectOption({ label: 'Harry Potter' });
     await page.locator('label:text("Currency :") + select').selectOption({ label: 'Rupee' });
 
