@@ -42,7 +42,7 @@ test.describe('JIRA 3: Customer Deposit Flow', () => {
         await expect(transactionTable).toBeVisible({ timeout: 5000 });
         await page.waitForSelector('table tbody tr');
 
-        // Print all transaction rows and cells for debugging
+        // Print all transaction rows and cells
         const allRows = await transactionTable.locator('tr').all();
         for (const [i, row] of allRows.entries()) {
           const cells = await row.locator('td').allTextContents();

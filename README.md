@@ -88,8 +88,8 @@ Test 2: APIRequest Error Response for missing first name while Adding Customer
 Test 3: APIRequest Duplicate Response while adding existing customer
 
 ***tests/Visual Tests***
-Test 1: Bank Manager Customer Page Visual Test - Add Customer
-Test 2: Bank Manager Open Account Page Visual Test - Open Account
+Test 1: Bank Manager Add Customer Visual Test
+Test 2: Bank Manager Open Account Visual Test
 
 ***Test Execution***
 Run the tests
