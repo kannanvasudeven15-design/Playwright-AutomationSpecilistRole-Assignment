@@ -11,7 +11,7 @@ test.describe('Bank Manager - Add New Customer Visual Test', () => {
     await expect(page).toHaveScreenshot('customer-page.png', { fullPage: true });
 
     await managerPage.clickAddCustomer();
-    await managerPage.fillCustomerDetails('John', 'Hulk', 'WN50JR');
+    await managerPage.fillCustomerDetails('Elon', 'Musk', 'WN50JR');
     page.once('dialog', async (dialog) => await dialog.accept());
     await managerPage.submitAddCustomerForm();
 
